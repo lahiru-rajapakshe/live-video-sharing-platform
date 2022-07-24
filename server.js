@@ -1,24 +1,29 @@
-const express= require('express');
-// const { execPath, hasUncaughtExceptionCaptureCallback } = require('process');
-const app=express();
-const server =require('http').Server(app);
-const io=require('socket.io')(server);
+const express = require('express')
+const app = express()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 const { v4: uuidV4 } = require('uuid')
-// import {v4 as uuidv4} from 'uuid';
-var socket      = require('socket.io')
 
-app.set('view engine','ejs')
-app.use(express.static('public'));
+app.set('view engine', 'ejs')
+app.use(express.static('public'))
 
-app.get('/',(req,res)=>{
-res.redirect(`/${uuidV4()}`)
+app.get('/', (req, res) => {
+  res.redirect(`/${uuidV4()}`)
 })
 
-app.get('/:room',(req,res)=>{
-    res.render('room',{ roomId: req.params.room })
+app.get('/:room', (req, res) => {
+  res.render('room', { roomId: req.params.room })
 })
 
+io.on('connection', socket => {
+  socket.on('join-room', (roomId, userId) => {
+    socket.join(roomId)
+    socket.to(roomId).broadcast.emit('user-connected', userId)
 
+    socket.on('disconnect', () => {
+      socket.to(roomId).broadcast.emit('user-disconnected', userId)
+    })
+  })
+})
 
-
-server.listen(5500);
+server.listen(5500)
