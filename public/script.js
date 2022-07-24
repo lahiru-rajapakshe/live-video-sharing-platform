@@ -29,3 +29,12 @@ function connectToNewUser(userId,stream){
     })
 
 }
+
+function addVideoStream(video,stream){
+    video.srcObject=stream
+    video.addEventListener('loadedmetadata',()=>{
+        video.play()
+    })
+
+    videoGrid.append(video)
+}
