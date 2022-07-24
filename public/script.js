@@ -38,3 +38,15 @@ function addVideoStream(video,stream){
 
     videoGrid.append(video)
 }
+
+myPeer.on('open',id=>{
+    socket.emit('join-room',ROOM_ID,id);
+})
+
+socket.on('user-connected',userId => {
+    console.log('User connected : '+userId)
+})
+
+socket.on('user-disconnected',userId=>{
+    console.log(userId)
+})
